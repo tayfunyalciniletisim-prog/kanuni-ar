@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Kanuni AR</title>
+    <meta name="description" content="Kanuni Sultan Süleyman'ı artırılmış gerçeklikle odana getir. Telefonunla aç, butona dokun, Kanuni karşında belirsin." />
+    <meta name="theme-color" content="#0e1422" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Kanuni Sultan Süleyman · AR" />
+    <meta property="og:description" content="Kanuni'yi artırılmış gerçeklikle odana getir." />
+    <meta property="og:image" content="https://tayfunyalciniletisim-prog.github.io/kanuni-ar/img/poster.webp" />
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #0e1422;
+        --ink-2: #151d30;
+        --ink-3: #1d2740;
+        --gold: #d6a84c;
+        --gold-soft: #ecd29a;
+        --crimson: #8f1d22;
+        --ivory: #f4ecdc;
+        --muted: #a8b0c3;
+        --line: rgba(214, 168, 76, 0.28);
+        --serif: "Cormorant Garamond", Georgia, serif;
+        --sans: "Nunito Sans", system-ui, -apple-system, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--ivory);
+        font-family: var(--sans);
+        line-height: 1.55;
+        font-variant-numeric: lining-nums;
+      }
+      a { color: var(--gold-soft); }
+
+      /* ---------- hero viewer ---------- */
+      .hero {
+        position: relative;
+        height: min(78svh, 760px);
+        min-height: 480px;
+        background:
+          radial-gradient(120% 70% at 50% 18%, #2a3557 0%, rgba(14, 20, 34, 0) 62%),
+          linear-gradient(180deg, var(--ink-2), var(--ink));
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .hero::before {
+        /* faint şemse ornament behind the figure */
+        content: "";
+        position: absolute;
+        inset: 8% 10% auto;
+        aspect-ratio: 1;
+        max-width: 560px;
+        margin: 0 auto;
+        background: url("img/semse.svg") center / contain no-repeat;
+        opacity: 0.13;
+        pointer-events: none;
+      }
+      model-viewer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        --poster-color: transparent;
+        --progress-bar-color: var(--gold);
+        background: transparent;
+      }
+      .title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: max(18px, env(safe-area-inset-top));
+        text-align: center;
+        pointer-events: none;
+        padding: 0 16px;
+        z-index: 2;
+      }
+      .kicker {
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 700;
+      }
+      h1 {
+        margin: 4px 0 0;
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(30px, 8vw, 52px);
+        line-height: 1.02;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+      }
+      .dates {
+        margin-top: 4px;
+        font-family: var(--serif);
+        font-size: 18px;
+        color: var(--gold-soft);
+      }
+      .ar-btn {
+        position: absolute;
+        left: 50%;
+        bottom: max(22px, env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 26px;
+        border: 1px solid #f3d999;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #e6bd62, #b98a2e);
+        color: #1b1307;
+        font: 700 17px/1 var(--sans);
+        box-shadow: 0 10px 30px rgba(214, 168, 76, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        cursor: pointer;
+        white-space: nowrap;
+        z-index: 3;
+        animation: glow 2.6s ease-in-out infinite;
+      }
+      .ar-btn svg { width: 22px; height: 22px; }
+      @keyframes glow {
+        50% { box-shadow: 0 10px 42px rgba(214, 168, 76, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.45); }
+      }
+      .hint {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: max(22px, env(safe-area-inset-bottom));
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted);
+        pointer-events: none;
+      }
+      model-viewer[ar-status="session-started"] .hint,
+      .hero.can-ar .hint { display: none; }
+      .progress {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 160px;
+        height: 3px;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .progress span { display: block; height: 100%; width: 0; background: var(--gold); transition: width 0.2s; }
+      .progress.done { opacity: 0; transition: opacity 0.4s; }
+
+      /* ---------- content ---------- */
+      main { max-width: 760px; margin: 0 auto; padding: 28px 16px 40px; }
+      section { margin: 0 0 34px; }
+      h2 {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 28px;
+        margin: 0 0 14px;
+        color: var(--gold-soft);
+      }
+      .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+      .steps li {
+        display: grid;
+        grid-template-columns: 38px 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        background: var(--ink-2);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .steps b {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--crimson);
+        color: var(--ivory);
+        font-family: var(--serif);
+        font-size: 20px;
+      }
+      .desktop-only { display: none; }
+      .no-ar .desktop-only { display: grid; }
+      .scan {
+        grid-template-columns: 148px 1fr;
+        gap: 18px;
+        align-items: center;
+        padding: 16px;
+        background: var(--ink-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        margin-top: 12px;
+      }
+      .scan img { width: 148px; height: 148px; background: #fff; border-radius: 10px; padding: 6px; }
+      .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .fact {
+        padding: 14px;
+        background: linear-gradient(180deg, var(--ink-3), var(--ink-2));
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .fact .num {
+        font-family: var(--serif);
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .fact .lbl { font-weight: 700; margin-top: 6px; }
+      .fact p { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+      blockquote {
+        margin: 0;
+        padding: 22px 20px;
+        border-left: 3px solid var(--gold);
+        background: var(--ink-2);
+        border-radius: 0 14px 14px 0;
+        font-family: var(--serif);
+        font-size: 23px;
+        line-height: 1.35;
+      }
+      blockquote cite { display: block; margin-top: 10px; font-family: var(--sans); font-style: normal; font-size: 13px; color: var(--muted); }
+      footer { text-align: center; font-size: 12px; color: var(--muted); padding: 0 16px 36px; }
+      @media (max-width: 420px) {
+        .facts { grid-template-columns: 1fr; }
+        .scan { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ar-btn { animation: none; }
+      }
+    </style>
+    <script>
+      self.ModelViewerElement = self.ModelViewerElement || {};
+      self.ModelViewerElement.meshoptDecoderLocation = "https://cdn.jsdelivr.net/npm/meshoptimizer@0.25.0/meshopt_decoder.js";
+    </script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
+  </head>
+  <body>
+    <header class="hero" id="hero">
+      <div class="title">
+        <div class="kicker">Artırılmış Gerçeklik</div>
+        <h1>Kanuni Sultan Süleyman</h1>
+        <div class="dates">1494 – 1566</div>
+      </div>
+      <model-viewer
+        id="viewer"
+        src="models/kanuni.glb"
+        ios-src="models/kanuni.usdz"
+        poster="img/poster.webp"
+        alt="Kanuni Sultan Süleyman'ın 3D modeli: büyük beyaz kavuk, samur kürklü kırmızı kaftan, elinde Kanunname"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
+        ar-placement="floor"
+        camera-controls
+        touch-action="pan-y"
+        auto-rotate
+        auto-rotate-delay="1200"
+        rotation-per-second="16deg"
+        interaction-prompt="none"
+        camera-orbit="18deg 80deg 5.6m"
+        camera-target="0m 1.08m 0m"
+        field-of-view="26deg"
+        min-camera-orbit="auto 25deg 2m"
+        max-camera-orbit="auto 95deg 9m"
+        shadow-intensity="1.1"
+        shadow-softness="0.9"
+        exposure="1.05"
+        tone-mapping="neutral"
+        environment-image="neutral"
+      >
+        <button slot="ar-button" class="ar-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2 3 7v10l9 5 9-5V7z" /><path d="M3 7l9 5 9-5M12 12v10" />
+          </svg>
+          Odanda Gör
+        </button>
+        <div slot="progress-bar" class="progress" id="progress"><span></span></div>
+      </model-viewer>
+      <div class="hint">Döndürmek için sürükle · AR için telefonundan aç</div>
+    </header>
+
+    <main>
+      <section>
+        <h2>Nasıl çalışır?</h2>
+        <ol class="steps">
+          <li><b>1</b><span><strong>“Odanda Gör”</strong> butonuna dokun.</span></li>
+          <li><b>2</b><span>Telefonunu yavaşça yere doğru gezdir; zemin algılanınca Kanuni belirir.</span></li>
+          <li><b>3</b><span>İki parmakla büyüt, küçült ya da döndür. Masana sığdırmak için küçültmen yeterli.</span></li>
+        </ol>
+        <div class="scan desktop-only">
+          <img src="img/qr.svg" alt="Bu sayfanın QR kodu" width="148" height="148" />
+          <div>
+            <strong>Bu deneyim telefon için tasarlandı.</strong>
+            <p style="margin: 6px 0 0; color: var(--muted)">QR kodu iPhone kamerasıyla okut; Safari'de açılan sayfadaki butona dokunduğunda Kanuni odanda belirir. Android'de Chrome ile de çalışır.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Kanunî kimdir?</h2>
+        <div class="facts">
+          <div class="fact">
+            <div class="num">46 yıl</div>
+            <div class="lbl">En uzun saltanat</div>
+            <p>1520'den 1566'ya kadar tahtta kaldı; Osmanlı tarihindeki en uzun saltanat onundur.</p>
+          </div>
+          <div class="fact">
+            <div class="num">Kanunî</div>
+            <div class="lbl">Adalet ve düzen</div>
+            <p>Yaptırdığı hukuki düzenlemeler nedeniyle “Kanunî” diye anılır; Batı'da ise “Muhteşem” lakabıyla bilinir.</p>
+          </div>
+          <div class="fact">
+            <div class="num">Muhibbî</div>
+            <div class="lbl">Şair padişah</div>
+            <p>“Muhibbî” mahlasıyla şiirler yazdı; geride geniş bir divan bıraktı.</p>
+          </div>
+          <div class="fact">
+            <div class="num">1557</div>
+            <div class="lbl">Süleymaniye</div>
+            <p>Mimar Sinan'ın İstanbul'da yaptığı Süleymaniye Camii ve külliyesi bu yıl tamamlandı.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <blockquote>
+          Halk içinde muteber bir nesne yok devlet gibi<br />
+          Olmaya devlet cihanda bir nefes sıhhat gibi
+          <cite>Muhibbî (Kanuni Sultan Süleyman)</cite>
+        </blockquote>
+      </section>
+    </main>
+
+    <footer>
+      3D model temsilîdir: tarihî portrelerden esinlenerek kodla üretilmiş bir heykelcik yorumudur.
+    </footer>
+
+    <script>
+      const viewer = document.getElementById("viewer");
+      const hero = document.getElementById("hero");
+      const bar = document.querySelector("#progress span");
+      viewer.addEventListener("progress", (e) => {
+        const p = e.detail.totalProgress;
+        bar.style.width = p * 100 + "%";
+        if (p >= 1) document.getElementById("progress").classList.add("done");
+      });
+      customElements.whenDefined("model-viewer").then(() => {
+        // canActivateAR settles once the element has checked the browser
+        setTimeout(() => {
+          document.documentElement.classList.toggle("no-ar", !viewer.canActivateAR);
+          hero.classList.toggle("can-ar", viewer.canActivateAR);
+        }, 400);
+      });
+    </script>
+  </body>
+</html>
