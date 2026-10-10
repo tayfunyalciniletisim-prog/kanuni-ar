@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Kanuni AR</title>
-    <meta name="description" content="Kanuni Sultan Süleyman'ı artırılmış gerçeklikle odana getir. Telefonunla aç, butona dokun, Kanuni karşında belirsin." />
+    <meta name="description" content="Kanuni Sultan Süleyman'ı artırılmış gerçeklikle masana, kitabının üstüne getir. Telefonunla aç, butona dokun, Kanuni seni alkışlasın ve elini uzatsın." />
     <meta name="theme-color" content="#0e1422" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Kanuni Sultan Süleyman · AR" />
-    <meta property="og:description" content="Kanuni'yi artırılmış gerçeklikle odana getir." />
+    <meta property="og:description" content="Kanuni'yi artırılmış gerçeklikle masana getir; seni alkışlasın, elini uzatsın." />
     <meta property="og:image" content="https://tayfunyalciniletisim-prog.github.io/kanuni-ar/img/poster-alkis.webp" />
     <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -300,11 +300,11 @@
         auto-rotate-delay="1200"
         rotation-per-second="16deg"
         interaction-prompt="none"
-        camera-orbit="8deg 82deg 5.4m"
-        camera-target="0m 1.08m 0m"
-        field-of-view="26deg"
-        min-camera-orbit="auto 25deg 2m"
-        max-camera-orbit="auto 95deg 9m"
+        camera-orbit="10deg 60deg 0.5m"
+        camera-target="0m 0.11m 0.03m"
+        field-of-view="30deg"
+        min-camera-orbit="auto 20deg 0.22m"
+        max-camera-orbit="auto 95deg 1m"
         shadow-intensity="1.1"
         shadow-softness="0.9"
         exposure="1.05"
@@ -315,7 +315,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M12 2 3 7v10l9 5 9-5V7z" /><path d="M3 7l9 5 9-5M12 12v10" />
           </svg>
-          Odanda Gör
+          Masanda Gör
         </button>
         <div slot="progress-bar" class="progress" id="progress"><span></span></div>
       </model-viewer>
@@ -330,16 +330,16 @@
       <section>
         <h2>Nasıl çalışır?</h2>
         <ol class="steps">
-          <li><b>1</b><span><strong>“Odanda Gör”</strong> butonuna dokun.</span></li>
-          <li><b>2</b><span>Telefonunu yavaşça yere doğru gezdir; zemin algılanınca Kanuni belirir.</span></li>
-          <li><b>3</b><span>İki parmakla büyüt, küçült ya da döndür. Masana sığdırmak için küçültmen yeterli.</span></li>
+          <li><b>1</b><span><strong>“Masanda Gör”</strong> butonuna dokun.</span></li>
+          <li><b>2</b><span>Telefonunu masandaki test kitabına doğrult ve yavaşça gezdir; yüzey algılanınca Kanuni kitabının üstünde belirir.</span></li>
+          <li><b>3</b><span>Kanuni yaklaşık 20 cm boyunda bir heykelcik gibi durur. İki parmakla büyütebilir, küçültebilir ya da döndürebilirsin.</span></li>
         </ol>
-        <p class="tip"><strong>Tokalaş!</strong> Kanuni önce alkışlar, ardından sağ elini sana uzatıp sol elini kalbine koyar. Telefonu tutarken diğer elini uzat ve onunla tokalaş.</p>
+        <p class="tip"><strong>Tokalaş!</strong> Kanuni önce alkışlar, ardından sol elini kalbine koyup sağ elini yukarı, sana doğru uzatır; eli büyüyerek senin elin kadar olur. Telefonu bir elinle tut, diğer elini uzat ve onunla tokalaş.</p>
         <div class="scan desktop-only">
           <img src="img/qr.svg" alt="Bu sayfanın QR kodu" width="148" height="148" />
           <div>
             <strong>Bu deneyim telefon için tasarlandı.</strong>
-            <p style="margin: 6px 0 0; color: var(--muted)">QR kodu iPhone kamerasıyla okut; Safari'de açılan sayfadaki butona dokunduğunda Kanuni odanda belirir. Android'de Chrome ile de çalışır.</p>
+            <p style="margin: 6px 0 0; color: var(--muted)">QR kodu iPhone kamerasıyla okut; Safari'de açılan sayfadaki butona dokunduğunda Kanuni masanda belirir. Android'de Chrome ile de çalışır.</p>
           </div>
         </div>
       </section>
@@ -419,7 +419,8 @@
         viewer.src = v.src;
         // the handshake should face the visitor; the still pose can turn
         viewer.autoRotate = !v.animated;
-        viewer.cameraOrbit = v.animated ? "8deg 82deg 5.4m" : "18deg 80deg 5.6m";
+        // seen from above, like a phone held over the desk
+        viewer.cameraOrbit = v.animated ? "10deg 60deg 0.5m" : "18deg 66deg 0.46m";
         for (const b of document.querySelectorAll(".variants button")) b.setAttribute("aria-selected", String(b.dataset.v === key));
       }
       for (const b of document.querySelectorAll(".variants button")) b.addEventListener("click", () => showVariant(b.dataset.v));
